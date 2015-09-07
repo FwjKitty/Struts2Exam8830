@@ -1,0 +1,10 @@
+程序运行步骤：
+mvn clean
+mvn compile
+mvn install
+mvn tomcat:run
+在浏览器地址栏中输入：
+1.http://localhost:8080/Struts2Exam8830/login.action【进入登录页面login.jsp】
+2.http://localhost:8080/Struts2Exam8830/customer/Customer_show.action?page=1【进入系统首页面index.jsp】
+3.http://localhost:8080/Struts2Exam8830/customer/Customer_add.action【进入系统添加Customer页面customerAdd.jsp】
+4.http://localhost:8080/Struts2Exam8830/customer/Customer_update.action?customer.customer_id=1【进入系统编辑Customer页面customerEdit.jsp】

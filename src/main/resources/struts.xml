@@ -62,16 +62,37 @@
 		</action>
 		<action name="*_*" class="action.{1}Action" method="{2}">
 			<result name="editSuccess">/WEB-INF/jsp/customerEdit.jsp</result>
-			<result name="editError" type="chain">Customer_show</result>
-			<result name="updateSuccess" type="chain">Customer_show</result>
-			<result name="updateError" type="chain">Customer_edit</result>
+			<result name="editError" type="redirectAction">
+				<param name="actionName">Customer_show</param>
+				<param name="page">${page}</param>
+			</result>
+			<result name="updateSuccess" type="redirectAction">
+				<param name="actionName">Customer_show</param>
+				<param name="page">${page}</param>
+				<param name="msg">${msg}</param>
+			</result>
+			<result name="updateError" type="redirectAction">Customer_edit.action</result>
 			<result name="showSuccess">/WEB-INF/jsp/index.jsp</result>
-			<result name="showError" type="redirect">Customer_show.action?page=1</result>
-			<result name="addError" type="chain">Customer_show</result>
+			<result name="showError" type="redirectAction">
+				<param name="actionName">Customer_show</param>
+				<param name="page">${page}</param>
+			</result>
+			<result name="addError" type="redirectAction">
+				<param name="actionName">Customer_show</param>
+				<param name="page">${page}</param>
+			</result>
 			<result name="addSuccess">/WEB-INF/jsp/customerAdd.jsp</result>
-			<result name="saveError" type="chain">Customer_add</result>
-			<result name="saveSuccess" type="chain">Customer_show</result>
-			<result name="del" type="chain">Customer_show</result>
+			<result name="saveError" type="redirectAction">Customer_add</result>
+			<result name="saveSuccess" type="redirectAction">
+				<param name="actionName">Customer_show</param>
+				<param name="page">${page}</param>
+				<param name="msg">${msg}</param>
+			</result>
+			<result name="del" type="redirectAction">
+				<param name="actionName">Customer_show</param>
+				<param name="page">${page}</param>
+				<param name="msg">${msg}</param>
+			</result>
 			<interceptor-ref name="defaultInterceptor"/>
 		</action>
 	</package>

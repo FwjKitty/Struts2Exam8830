@@ -1,7 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="s" uri="/struts-tags" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -76,13 +76,13 @@
 									<td colspan="3">
 									<div class="pull-right">
 									<s:if test="page==1">
-										<a href="CustomerShow?page=1" class="btn btn-default"><<</a>
+										<a href="<%=request.getContextPath() %>/customer/Customer_show.action?page=1" class="btn btn-default"><<</a>
 									</s:if>
 									<s:elseif test="page!=1">
 										<a href="<%=request.getContextPath() %>/customer/Customer_show.action?page=${page-1}" class="btn btn-default"><<</a>
 									</s:elseif>
 										<a href="<%=request.getContextPath() %>/customer/Customer_show.action?page=1" class="btn btn-default">first</a>
-										<a href="<%=request.getContextPath() %>/customer/Customer_show.action?page=<fmt:formatNumber type='number' value='${(count-count%10)/10+1}' maxFractionDigits='0'/>" class="btn btn-default">last</a>
+										<a href="<%=request.getContextPath() %>/customer/Customer_show.action?page=${fn:substringBefore((count-count%10)/10+1, '.')}" class="btn btn-default">last</a>
 										<a href="<%=request.getContextPath() %>/customer/Customer_show.action?page=${page+1}" class="btn btn-default">>></a>
 									</div>
 									</td>

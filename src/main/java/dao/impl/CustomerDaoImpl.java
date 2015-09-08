@@ -96,16 +96,71 @@ public class CustomerDaoImpl implements CustomerDaoI {
 
 	public boolean delete(int customer_id) throws SQLException {
 		Connection conn = ConnectionFactory.getInstance().makeConnection();
-		String sql = "DELETE FROM customer WHERE customer_id=?";
-		PreparedStatement ps = conn.prepareStatement(sql);
+		PreparedStatement ps = conn.prepareStatement("DELETE FROM customer WHERE customer_id=?");
+		PreparedStatement ps1 = conn.prepareStatement("DELETE FROM payment WHERE customer_id=?");
+		PreparedStatement ps2 = conn.prepareStatement("DELETE FROM rental WHERE customer_id=?");
 		ps.setInt(1, customer_id);
-		boolean flag = false;
-		if(ps.executeUpdate() != 0){
-			flag = true;
-		}
-		ps.close();
-		conn.close();
-		return flag;
+		ps1.setInt(1, customer_id);
+		ps2.setInt(1, customer_id);
+		ps1.executeUpdate();
+		ps2.executeUpdate();
+		ps.executeUpdate();
+		return true;
+//		try{
+//			ps1.executeUpdate();
+//		}catch(Exception e){
+//			e.printStackTrace();
+//			ps1.close();
+//			try{
+//				ps2.executeUpdate();
+//			}catch(Exception e2){
+//				ps2.close();
+//				ps.setInt(1, customer_id);
+//				if(ps.executeUpdate() != 0){
+//					ps.close();
+//					conn.close();
+//					return true;
+//				}
+//				ps.close();
+//				conn.close();
+//				return false;
+//			}
+//			ps.setInt(1, customer_id);
+//			if(ps.executeUpdate() != 0){
+//				ps2.close();
+//				ps.close();
+//				conn.close();
+//				return true;
+//			}
+//			ps2.close();
+//			ps.close();
+//			conn.close();
+//			return false;
+//		}
+//		ps1.close();
+//		try{
+//			ps2.executeUpdate();
+//		}catch(Exception e2){
+//			ps2.close();
+//			ps.setInt(1, customer_id);
+//			if(ps.executeUpdate() != 0){
+//				ps.close();
+//				conn.close();
+//				return true;
+//			}
+//			ps.close();
+//			conn.close();
+//			return false;
+//		}
+//		ps.setInt(1, customer_id);
+//		if(ps.executeUpdate() != 0){
+//			ps.close();
+//			conn.close();
+//			return true;
+//		}
+//		ps.close();
+//		conn.close();
+//		return true;
 	}
 
 	public boolean update(Customer customer) throws SQLException {

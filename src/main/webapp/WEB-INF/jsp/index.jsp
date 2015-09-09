@@ -10,7 +10,79 @@
 	<meta http-equiv="cache-control" content="no-cache">
 	<title>Insert title here</title>
 	<link rel="stylesheet" type="text/css" href="<%=request.getContextPath() %>/css/bootstrap.min.css" />
+	<script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.min.js"></script>
 </head>
+<script type="text/javascript">
+function getPage(page) {
+    $.ajax({
+        type: "post",
+        url: "<%=request.getContextPath() %>/customer/Customer_show.action",
+        dataType: "json",
+        data : {"page" : page},
+        timeout: 5000,
+        error: function(status){
+        	alert(status);
+        },
+        success: function(list){
+        	var nextpage ;
+            var lastpage ;
+            var finalpage="${fn:substringBefore((count-count%10)/10+1, '.')}";
+            if(page==1){
+            	lastpage=1;
+            }else lastpage=page-1;
+            if(finalpage==page){
+            	nextpage=page;
+            }else nextpage=page+1;
+        	$("#result").text("");
+        	$("#pageFooter").text("");
+    		var _tbody = "";
+    		var _tfooter = "";
+    		//遍历json数组方法1
+    		$.each(list,function(n, customer){
+                	_tbody += "<tr><td><a href='customer/Customer_edit.action?customer.customer_id="+customer.customer_id+"'>编辑</a> | <a href='customer/Customer_del.action?customer.customer_id="+customer.customer_id+"'>删除</a></td>"
+                		+"<td>"+customer.first_name+"</td>"
+                		+"<td>"+customer.last_name+"</td>"
+                		+"<td>"+customer.address+"</td>"
+                		+"<td>"+customer.email+"</td>"
+                		+"<td>"+customer.customer_id+"</td>"
+                		+"<td>"+customer.last_update.year+"-"+customer.last_update.month+"-"+customer.last_update.day+" "+customer.last_update.day+":"+customer.last_update.minutes+":"+customer.last_update.seconds+"</td></tr>";
+    		});
+    		_tfooter = "<button onclick='getPage("+lastpage+")' class='btn btn-default'><<</button>"
+				+"<button onclick='getPage(1)' class='btn btn-default'>first</button>"
+				+"<button onclick='getPage("+finalpage+")' class='btn btn-default'>last</button>"
+				+"<button onclick='getPage("+nextpage+")' class='btn btn-default'>>></button>";
+    		$("#result").append(_tbody);
+    		$("#pageFooter").append(_tfooter);
+        },
+        complete: function(XMLHttpRequest, textStatus, errorThrown){
+            alert(textStatus);
+       }
+    });
+    <%-- $("#result").load("<%=request.getContextPath() %>/customer/Customer_show.action",function(list,status){
+		//alert(list);
+		var _tbody = "";
+		//遍历json数组方法1
+		$.each(list,function(n, customer){
+            alert(n + ',' + customer);
+            _tbody += "<tr><td>"+customer.first_name+"</td><td>"+customer.last_name+"</td><td>"+customer.address+  
+            "</td><td>"+customer.email+"</td><td>"+customer.customer_id+"</td><td>"+customer.last_update+"</td></tr>";
+        });
+		$("#result").append(_tbody);
+		
+		//遍历json对象
+		/* for(var i=0,l=json.length;i<l;i++){
+		    for(var key in json[i]){
+		        alert(key+':'+json[i][key]);
+		    }
+		 }*/
+		//遍历json对象
+		/* for(var p in obj){
+		    str = str+obj[p]+',';
+		    return str;
+		} */
+      }); --%>
+}
+</script>
 <body>
 	<div class="container-fuild">
 		<div class="row">
@@ -57,16 +129,16 @@
 									<th>LastUpdate</th>
 								</tr>
 							</thead>
-							<tbody>
+							<tbody id="result">
 							<s:iterator value="#request.list" id="customer">
 								<tr>
-									<td><a href="<%=request.getContextPath() %>/customer/Customer_edit.action?customer.customer_id=${customer.customer_id}">编辑</a> | <a href="<%=request.getContextPath() %>/customer/Customer_del.action?customer.customer_id=${customer.customer_id}">删除</a>
+									<td><a href="<%=request.getContextPath() %>/customer/Customer_edit.action?customer.customer_id=${customer.customer_id}">编辑</a> | <a href="<%=request.getContextPath() %>/customer/Customer_del.action?customer.customer_id=${customer.customer_id}">删除</a></td>
 									<td><s:property value="#customer.first_name"/></td>
 									<td><s:property value="#customer.last_name"/></td>
 									<td><s:property value="#customer.address"/></td>
 									<td><s:property value="#customer.email"/></td>
 									<td><s:property value="#customer.customer_id"/></td>
-									<td><s:property value="#customer.last_update"/></td>
+									<td><s:date name="#customer.last_update"/></td>
 								</tr>
 							</s:iterator>
 							</tbody>
@@ -74,16 +146,16 @@
 								<tr>
 									<td colspan="4">${msg}</td>
 									<td colspan="3">
-									<div class="pull-right">
-									<s:if test="page==1">
-										<a href="<%=request.getContextPath() %>/customer/Customer_show.action?page=1" class="btn btn-default"><<</a>
+									<div class="pull-right" id="pageFooter">
+									<s:if test="page+1-1==1">
+										<button onclick="getPage(1)" class="btn btn-default"><<</button>
 									</s:if>
-									<s:elseif test="page!=1">
-										<a href="<%=request.getContextPath() %>/customer/Customer_show.action?page=${page-1}" class="btn btn-default"><<</a>
-									</s:elseif>
-										<a href="<%=request.getContextPath() %>/customer/Customer_show.action?page=1" class="btn btn-default">first</a>
-										<a href="<%=request.getContextPath() %>/customer/Customer_show.action?page=${fn:substringBefore((count-count%10)/10+1, '.')}" class="btn btn-default">last</a>
-										<a href="<%=request.getContextPath() %>/customer/Customer_show.action?page=${page+1}" class="btn btn-default">>></a>
+									<s:else>
+										<button onclick="getPage(${page-1})" class="btn btn-default"><<</button>
+									</s:else>
+										<button onclick="getPage(1)" class="btn btn-default">first</button>
+										<button onclick="getPage(${fn:substringBefore((count-count%10)/10+1, '.')})" class="btn btn-default">last</button>
+										<button onclick="getPage(${page+1})" class="btn btn-default">>></button>
 									</div>
 									</td>
 								</tr>

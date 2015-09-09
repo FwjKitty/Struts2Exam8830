@@ -200,4 +200,28 @@ public class CustomerDaoImpl implements CustomerDaoI {
 		conn.close();
 		return false;
 	}
+
+	@Override
+	public List<Customer> queryAll() throws SQLException {
+		Connection conn = ConnectionFactory.getInstance().makeConnection();
+		String sql = "SELECT customer_id,first_name,last_name,email,customer.last_update,address FROM customer,address WHERE customer.address_id=address.address_id ORDER BY customer_id DESC";
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ResultSet rs = ps.executeQuery();
+		List<Customer> list = new ArrayList<Customer>();
+		Customer customer = null;
+		while(rs.next()){
+			customer = new Customer();
+			customer.setCustomer_id(rs.getInt("customer_id"));
+			customer.setFirst_name(rs.getString("first_name"));;
+			customer.setLast_name(rs.getString("last_name"));
+			customer.setAddress(rs.getString("address"));
+			customer.setEmail(rs.getString("email"));
+			customer.setLast_update(rs.getTimestamp("last_update"));
+			list.add(customer);
+		}
+		rs.close();
+		ps.close();
+		conn.close();
+		return list;
+	}
 }

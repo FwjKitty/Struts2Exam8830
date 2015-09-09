@@ -8,6 +8,7 @@ import pojo.Customer;
 public interface CustomerDaoI {
 
 	public List<Customer> getPageResult(int page,int pageSize) throws SQLException;
+	public List<Customer> queryAll() throws SQLException;
 	public int getCount() throws SQLException;
 	public Customer queryById(int customer_id) throws SQLException;
 	public boolean save(Customer customer) throws SQLException;

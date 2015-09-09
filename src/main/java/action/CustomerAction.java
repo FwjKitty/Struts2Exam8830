@@ -1,8 +1,10 @@
 package action;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,15 +16,23 @@ import dao.AddressDaoI;
 import dao.CustomerDaoI;
 import dao.impl.AddressDaoImpl;
 import dao.impl.CustomerDaoImpl;
+import net.sf.json.JSONArray;
+import net.sf.json.JsonConfig;
+import net.sf.json.processors.JsDateJsonValueProcessor;
 import pojo.Address;
 import pojo.Customer;
 
 public class CustomerAction {
 
 	private Customer customer;
+	//当前页码
 	private int page;
+	//customer总数
 	private int count;
+	//提示信息
 	private String msg;
+	//json数据
+	private String result;
 	private CustomerDaoI customerDao;
 	private AddressDaoI addressDao;
 	public String edit(){
@@ -71,14 +81,23 @@ public class CustomerAction {
 		HttpServletRequest request = ServletActionContext.getRequest();
 		try {
 			List<Customer> list = customerDao.getPageResult(page, 10);
-			int count = customerDao.getCount();
-			request.setAttribute("list", list);
-			this.setPage(page);
-			this.setCount(count);
-			return "showSuccess";
+			//List<Customer> list = customerDao.queryAll();
+			JsonConfig config=new JsonConfig();  
+		    config.registerJsonValueProcessor(Timestamp.class, new JsDateJsonValueProcessor());
+			JSONArray jc = JSONArray.fromObject(list,config);
+			//this.setResult(jc.toString());
+			//int count = customerDao.getCount();
+			PrintWriter out = ServletActionContext.getResponse().getWriter();
+			out.println(jc.toString());
+			//this.setPage(page);
+			//this.setCount(count);
+			return null;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return "showError";
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 	
@@ -92,7 +111,7 @@ public class CustomerAction {
 			return "addSuccess";
 		} catch (SQLException e) {
 			e.printStackTrace();
-			page = 1;
+			this.setPage(1);
 			return "addError";
 		}
 	}
@@ -158,5 +177,13 @@ public class CustomerAction {
 	}
 	public void setMsg(String msg) {
 		this.msg = msg;
+	}
+
+	public String getResult() {
+		return result;
+	}
+
+	public void setResult(String result) {
+		this.result = result;
 	}
 }

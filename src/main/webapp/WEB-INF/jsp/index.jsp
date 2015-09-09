@@ -14,9 +14,10 @@
 </head>
 <script type="text/javascript">
 function getPage(page) {
+	$("#msg").text("");
     $.ajax({
         type: "post",
-        url: "<%=request.getContextPath() %>/customer/Customer_show.action",
+        url: "<%=request.getContextPath() %>/customer/Customer_getPageResult.action",
         dataType: "json",
         data : {"page" : page},
         timeout: 5000,
@@ -39,7 +40,7 @@ function getPage(page) {
     		var _tfooter = "";
     		//遍历json数组方法1
     		$.each(list,function(n, customer){
-                	_tbody += "<tr><td><a href='customer/Customer_edit.action?customer.customer_id="+customer.customer_id+"'>编辑</a> | <a href='customer/Customer_del.action?customer.customer_id="+customer.customer_id+"'>删除</a></td>"
+                	_tbody += "<tr><td><a href='Customer_edit.action?customer.customer_id="+customer.customer_id+"'>编辑</a> | <a href='Customer_del.action?customer.customer_id="+customer.customer_id+"'>删除</a></td>"
                 		+"<td>"+customer.first_name+"</td>"
                 		+"<td>"+customer.last_name+"</td>"
                 		+"<td>"+customer.address+"</td>"
@@ -58,7 +59,7 @@ function getPage(page) {
             alert(textStatus);
        }
     });
-    <%-- $("#result").load("<%=request.getContextPath() %>/customer/Customer_show.action",function(list,status){
+    <%-- $("#result").load("<%=request.getContextPath() %>/customer/Customer_getPageResult.action",function(list,status){
 		//alert(list);
 		var _tbody = "";
 		//遍历json数组方法1
@@ -144,7 +145,7 @@ function getPage(page) {
 							</tbody>
 							<tfoot>
 								<tr>
-									<td colspan="4">${msg}</td>
+									<td colspan="4" id="msg">${msg}</td>
 									<td colspan="3">
 									<div class="pull-right" id="pageFooter">
 									<s:if test="page+1-1==1">

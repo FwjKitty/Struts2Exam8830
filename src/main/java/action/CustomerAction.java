@@ -76,21 +76,15 @@ public class CustomerAction {
 		
 	}
 	
-	public String show(){
+	public String getPageResult(){
 		customerDao = new CustomerDaoImpl();
-		HttpServletRequest request = ServletActionContext.getRequest();
 		try {
 			List<Customer> list = customerDao.getPageResult(page, 10);
-			//List<Customer> list = customerDao.queryAll();
 			JsonConfig config=new JsonConfig();  
 		    config.registerJsonValueProcessor(Timestamp.class, new JsDateJsonValueProcessor());
 			JSONArray jc = JSONArray.fromObject(list,config);
-			//this.setResult(jc.toString());
-			//int count = customerDao.getCount();
 			PrintWriter out = ServletActionContext.getResponse().getWriter();
 			out.println(jc.toString());
-			//this.setPage(page);
-			//this.setCount(count);
 			return null;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -98,6 +92,22 @@ public class CustomerAction {
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+	
+	public String show(){
+		customerDao = new CustomerDaoImpl();
+		HttpServletRequest request = ServletActionContext.getRequest();
+		try {
+			List<Customer> list = customerDao.getPageResult(page, 10);
+			int count = customerDao.getCount();
+			request.setAttribute("list", list);
+			this.setPage(page);
+			this.setCount(count);
+			return "showSuccess";
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return "showError";
 		}
 	}
 	
